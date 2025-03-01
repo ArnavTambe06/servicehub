@@ -16,7 +16,14 @@ const ServiceCard2 = ({ passedService, passedIndex, onDeleteItem, showDelete }) 
                 <div className="flex-row left-justify">
                     <p className='para-type2 icon-para'><Widgets />{passedService.serviceCategory}</p>
                     <p className='para-type3 icon-para'><MonetizationOn />Price: Rs. {passedService.servicePrice}</p>
-                    {showDelete ? <button className='button-type2' onClick={() => onDeleteItem(passedIndex)}><RemoveShoppingCart />Remove</button> : <></>}
+                    {showDelete && (
+                        <button
+                            className='button-type2'
+                            onClick={() => onDeleteItem(passedService.serviceId)} // Pass serviceId instead of index
+                        >
+                            <RemoveShoppingCart />Remove
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

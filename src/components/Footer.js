@@ -1,15 +1,12 @@
-import React from 'react'
+import React from 'react';
+import './Footer.css';
 
 const Footer = () => {
     return (
-        <header className='footer'>
-            <div className='eightyperc-container'>
-                <div className='footer-main'>
-                    <p>Copyright &copy; 2021 WeCare Home Solutions.</p>
-                </div>
-            </div>
-        </header>
-    )
-}
+        <footer className="footer">
+            <p>ServiceHUB. All rights reserved.</p>
+        </footer>
+    );
+};
 
-export default Footer
+export default Footer;

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import { signOut, deleteUser } from 'firebase/auth'
+import { signOut, deleteUser, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth'
 import { auth, db } from '../firebaseInit'
 import { doc, getDoc, deleteDoc } from 'firebase/firestore'
 import { Redirect } from 'react-router'
@@ -93,20 +93,26 @@ const Account = () => {
 
     const onDeleteUser = async (e) => {
         e.preventDefault()
-        setLoading(true)
-        var getWhich = 'users'
-        if (isProvider) {
-            getWhich = 'providers'
+        const password = prompt("Enter your password to confirm account deletion:")
+        if (!password) {
+            alert("Password is required to delete your account.")
+            return
         }
-        const user = auth.currentUser
-        await deleteDoc(doc(db, getWhich, currentUser.uid))
-        deleteUser(user).then(() => {
+
+        const credential = EmailAuthProvider.credential(currentUser.email, password)
+        try {
+            setLoading(true)
+            await reauthenticateWithCredential(currentUser, credential)
+            const collectionName = isProvider ? 'providers' : 'users'
+            await deleteDoc(doc(db, collectionName, currentUser.uid))
+            await deleteUser(currentUser)
             alert('Successfully Deleted!')
             history.push('/login')
-        }).catch((error) => {
-            console.log(error)
-        })
-        setLoading(false)
+        } catch (error) {
+            alert("Deletion failed: " + error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     if (currentUser !== null) {

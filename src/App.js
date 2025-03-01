@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './components/PrivateRoute'
 import Navbar from './components/Navbar'
 import Services from './pages/Services'
+import CategoryPage from './pages/CategoryPage'
 import About from './pages/About'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -13,18 +14,18 @@ import Checkout from './pages/Checkout'
 import Homepage from './pages/Homepage'
 import Footer from './components/Footer'
 
-
 const App = () => {
 
     return (
         <AuthProvider>
             <Router>
-                <div className='main'>
+                <div className='main' style={{ minHeight: '100vh', paddingBottom: '60px', position: 'relative' }}>
                     <Navbar />
                     <Route path='/' exact render={(props) => (
                         <Homepage />
                     )} />
                     <Route exact path='/services' component={Services} />
+                    <Route exact path='/services/:category' component={CategoryPage} />
                     <Route exact path='/about' component={About} />
                     <Route exact path='/login' component={Login} />
                     <Route exact path='/signup' component={SignUp} />
