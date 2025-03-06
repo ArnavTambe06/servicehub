@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Divider, Typography } from '@mui/material';
+import { TextField, Button, Grid, Divider } from '@mui/material';
 import { createUserWithEmailAndPassword, signInWithPopup, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebaseInit';
 import { useHistory } from 'react-router-dom';
 import GoogleIcon from '@mui/icons-material/Google';
+import '../styles/userSignupForm.css';
 
 const UserSignupForm = () => {
     const history = useHistory();
@@ -89,94 +90,112 @@ const UserSignupForm = () => {
     };
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
+        <div className="u_auth-container">
+            <div className="u_auth-card">
+                <div className="u_auth-header">
+                    <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+                    <p>{isLogin ? 'Sign in to continue' : 'Join our community'}</p>
+                </div>
+
                 <Button
-                    fullWidth variant="outlined" startIcon={<GoogleIcon />}
-                    onClick={handleGoogleSignIn} disabled={loading}
+                    fullWidth
+                    className="u_google-btn"
+                    variant="outlined"
+                    startIcon={<GoogleIcon />}
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
                 >
                     Continue with Google
                 </Button>
-                <Divider sx={{ my: 2 }}>
-                    <Typography color="textSecondary">OR</Typography>
-                </Divider>
-            </Grid>
 
-            {isLogin ? (
-                <form onSubmit={handleLogin}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth name="email" label="Email" type="email"
-                                value={loginData.email || ''}
-                                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} required
-                            />
+                <Divider className="u_auth-divider">or</Divider>
+
+                {isLogin ? (
+                    <form onSubmit={handleLogin}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth name="email" label="Email" type="email"
+                                    className="u_form-field"
+                                    value={loginData.email || ''}
+                                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth name="password" label="Password" type="password"
+                                    className="u_form-field"
+                                    value={loginData.password || ''}
+                                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button fullWidth variant="contained" type="submit" className="u_submit-btn" disabled={loading}>
+                                    Login
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth name="password" label="Password" type="password"
-                                value={loginData.password || ''}
-                                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} required
-                            />
+                    </form>
+                ) : (
+                    <form onSubmit={handleSignup}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth label="Full Name" name="fullName"
+                                    className="u_form-field"
+                                    onChange={handleChange} value={formData.fullName || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth label="Phone" name="phone"
+                                    className="u_form-field"
+                                    onChange={handleChange} value={formData.phone || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth label="Address" name="address"
+                                    className="u_form-field"
+                                    onChange={handleChange} value={formData.address || ''}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth label="Email" name="email" type="email"
+                                    className="u_form-field"
+                                    onChange={handleChange} value={formData.email || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth label="Password" name="password" type="password"
+                                    className="u_form-field"
+                                    onChange={handleChange} value={formData.password || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button fullWidth variant="contained" type="submit" className="u_submit-btn" disabled={loading}>
+                                    Sign Up
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button fullWidth variant="contained" type="submit" disabled={loading}>
-                                Login
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            ) : (
-                <form onSubmit={handleSignup}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth label="Full Name" name="fullName"
-                                onChange={handleChange} value={formData.fullName || ''}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth label="Phone" name="phone"
-                                onChange={handleChange} value={formData.phone || ''}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth label="Address" name="address"
-                                onChange={handleChange} value={formData.address || ''}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth label="Email" name="email" type="email"
-                                onChange={handleChange} value={formData.email || ''}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth label="Password" name="password" type="password"
-                                onChange={handleChange} value={formData.password || ''}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button fullWidth variant="contained" type="submit" disabled={loading}>
-                                Sign Up
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            )}
-            <Grid item xs={12}>
-                <Button fullWidth onClick={() => setIsLogin(!isLogin)}>
-                    {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
-                </Button>
-            </Grid>
-        </Grid>
+                    </form>
+                )}
+                <div className="u_auth-footer">
+                    <Button
+                        onClick={() => setIsLogin(!isLogin)}
+                        sx={{ color: 'primary.main' }}
+                    >
+                        {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+                    </Button>
+                </div>
+            </div>
+        </div>
     );
 };
 

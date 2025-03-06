@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Paper, Typography, Link } from '@mui/material';
+import { Button, TextField, Divider, Typography } from '@mui/material';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseInit';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useHistory, Link as RouterLink } from 'react-router-dom';
-import './Login.css';
+import '../styles/login.css';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -38,46 +38,73 @@ const Login = () => {
     };
 
     return (
-        <Container maxWidth="sm" className="loginContainer">
-            <Paper elevation={3} style={{ padding: '1rem' }}>
-                <Typography variant="h5" gutterBottom>Login</Typography>
-                <form onSubmit={handleLogin} className="loginForm">
+        <div className="auth-container">
+            <div className="auth-card">
+                <div className="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Login to access your account</p>
+                </div>
+
+                <Button
+                    fullWidth
+                    className="google-btn"
+                    variant="outlined"
+                    startIcon={<GoogleIcon />}
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
+                >
+                    Continue with Google
+                </Button>
+
+                <Divider className="auth-divider">or</Divider>
+
+                <form onSubmit={handleLogin}>
                     <TextField
+                        fullWidth
                         label="Email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="form-field"
                         required
                     />
                     <TextField
+                        fullWidth
                         label="Password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="form-field"
                         required
                     />
                     <Button
                         type="submit"
+                        fullWidth
                         variant="contained"
-                        className="loginButton"
+                        className="submit-btn"
                         disabled={loading}
                     >
                         Login
                     </Button>
                 </form>
-                <div className="googleButton" onClick={handleGoogleSignIn}>
-                    <GoogleIcon />
-                    <span>Continue with Google</span>
+
+                <div className="auth-footer">
+                    <Typography
+                        component={RouterLink}
+                        to="/signup"
+                        sx={{
+                            color: 'primary.main',
+                            textDecoration: 'none',
+                            '&:hover': {
+                                textDecoration: 'underline'
+                            }
+                        }}
+                    >
+                        Don't have an account? Sign up
+                    </Typography>
                 </div>
-                <Link
-                    component={RouterLink}
-                    to="/signup"
-                    style={{ marginTop: '1rem', display: 'block', textDecoration: 'none', color: '#2575fc' }}
-                >
-                    Don't have an account? Create one.
-                </Link>
-            </Paper>
-        </Container>
+            </div>
+        </div>
     );
 };
 

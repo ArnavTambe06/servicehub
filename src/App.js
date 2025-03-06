@@ -13,28 +13,37 @@ import Account from './pages/Account'
 import Checkout from './pages/Checkout'
 import Homepage from './pages/Homepage'
 import Footer from './components/Footer'
+import { ThemeProvider } from '@mui/material';
+import { theme } from './theme';
+import './styles/global.css';
 
 const App = () => {
 
     return (
-        <AuthProvider>
-            <Router>
-                <div className='main' style={{ minHeight: '100vh', paddingBottom: '60px', position: 'relative' }}>
-                    <Navbar />
-                    <Route path='/' exact render={(props) => (
-                        <Homepage />
-                    )} />
-                    <Route exact path='/services' component={Services} />
-                    <Route exact path='/services/:category' component={CategoryPage} />
-                    <Route exact path='/about' component={About} />
-                    <Route exact path='/login' component={Login} />
-                    <Route exact path='/signup' component={SignUp} />
-                    <PrivateRoute exact path='/account' component={Account} />
-                    <PrivateRoute exact path='/checkout' component={Checkout} />
-                    <Footer />
-                </div>
-            </Router>
-        </AuthProvider>
+        <ThemeProvider theme={theme}>
+            <AuthProvider>
+                <Router>
+                    <div className='app-wrapper'>
+                        <div className='content-wrapper'>
+                            <Navbar />
+                            <main>
+                                <Route path='/' exact render={(props) => (
+                                    <Homepage />
+                                )} />
+                                <Route exact path='/services' component={Services} />
+                                <Route exact path='/services/:category' component={CategoryPage} />
+                                <Route exact path='/about' component={About} />
+                                <Route exact path='/login' component={Login} />
+                                <Route exact path='/signup' component={SignUp} />
+                                <PrivateRoute exact path='/account' component={Account} />
+                                <PrivateRoute exact path='/checkout' component={Checkout} />
+                            </main>
+                        </div>
+                        <Footer />
+                    </div>
+                </Router>
+            </AuthProvider>
+        </ThemeProvider>
     );
 }
 

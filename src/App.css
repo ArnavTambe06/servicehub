@@ -1,3 +1,5 @@
+@import './styles/global.css';
+
 /*
 fonts:
 montserrat
@@ -37,37 +39,44 @@ Monaco
   --green: rgb(29, 165, 29);
 }
 
-/* reset */
+/* Reset and base styles using global colors */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-weight: normal;
-  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-/**
-a {
-  font-family: 'Montserrat';
-  font-size: 18px;
-  text-decoration: none;
-  color: #000;
-  margin: 5px;
-  padding: 10px 15px;
-  border-radius: 10px;
-}
-
-a:hover {
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-primary);
   background: var(--grey);
-  color: #401BE7;
 }
 
-a:active {
-  background: #401BE7;
-  color: #fff;
-  transition: all 0.1s ease;
+/* Global layout */
+.app-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
 }
-*/
+
+/* Header and footer use primary color */
+header, footer {
+  background: var(--primary-color);
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Utilities */
+.text-center {
+  text-align: center;
+}
 
 a {
   text-decoration: none;
@@ -200,12 +209,6 @@ textarea {
   border: none;
   border-radius: 10px;
   resize: none;
-}
-
-body {
-  background: #e2e1e0;
-  font-family: 'Google Sans', 'Montserrat', 'Segoe UI';
-  font-size: 19;
 }
 
 .mv-10 {
@@ -774,4 +777,18 @@ body {
 .cart-total-card h4 {
   padding: 10px;
   margin: 10px;
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1 0 auto;
+}
+
+main {
+  padding-bottom: 2rem;
 }

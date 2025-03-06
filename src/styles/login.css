@@ -1,0 +1,125 @@
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    
+}
+
+.auth-card {
+   
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 2.5rem;
+    width: 500px;
+    max-width: 600px;
+    position: relative;
+    border: 1px solid var(--accent-cream);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+    color: var(--primary-dark);
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: var(--text-secondary);
+}
+
+.google-btn {
+    background: white !important;
+    border: 1px solid var(--accent-cream) !important;
+    color: var(--text-primary) !important;
+    padding: 12px !important;
+    text-transform: none !important;
+    font-size: 1rem !important;
+}
+
+.google-btn:hover {
+    background: var(--accent-cream) !important;
+}
+
+.auth-divider {
+    margin: 2rem 0 !important;
+    color: var(--text-secondary) !important;
+}
+
+.form-field {
+    margin-bottom: 1.5rem !important;
+}
+
+.form-field .MuiOutlinedInput-root {
+    background: white;
+}
+
+.form-field .MuiOutlinedInput-root:hover fieldset {
+    border-color: var(--primary-main);
+}
+
+.submit-btn {
+    background: linear-gradient(45deg, var(--primary-main), var(--primary-light)) !important;
+    padding: 12px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    font-size: 1.1rem !important;
+    margin-top: 1rem !important;
+    transition: transform 0.2s !important;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.auth-footer a {
+    color: var(--primary-main);
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(circle, var(--background-default) 40%, var(--accent-cream) 100%);
+}
+
+.login-card {
+    background: var(--background-paper);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    border: none;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ...other existing styles with 'login-' prefix... */

@@ -1,33 +1,54 @@
-import React from 'react'
-import { Widgets, MonetizationOn, RemoveShoppingCart } from '@mui/icons-material'
+import React from 'react';
+import { Card, CardContent, Typography, Box, IconButton } from '@mui/material';
+import { Widgets, MonetizationOn, Delete } from '@mui/icons-material';
 
 const ServiceCard2 = ({ passedService, passedIndex, onDeleteItem, showDelete }) => {
-    const displayIndex = passedIndex + 1
     return (
-        <div className='flex-row stretch-justify' key={passedIndex}>
-            <div className='service-card'>
-                <div className="flex-row left-justify">
-                    <p className='circle index-circle'>{displayIndex}</p>
-                    <p className='para-type2'>{passedService.serviceTitle}</p>
-                </div>
-                <div className="flex-row stretch-justify">
-                    <p className='grey-container'>{passedService.serviceDescription}</p>
-                </div>
-                <div className="flex-row left-justify">
-                    <p className='para-type2 icon-para'><Widgets />{passedService.serviceCategory}</p>
-                    <p className='para-type3 icon-para'><MonetizationOn />Price: Rs. {passedService.servicePrice}</p>
+        <Card
+            elevation={2}
+            sx={{
+                mb: 2,
+                '&:hover': {
+                    boxShadow: 6,
+                    transform: 'translateY(-2px)',
+                    transition: 'all 0.3s ease'
+                }
+            }}
+        >
+            <CardContent>
+                <Typography variant="h6" gutterBottom>
+                    {passedService.serviceTitle}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {passedService.serviceDescription}
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Widgets sx={{ mr: 1, color: 'primary.main' }} />
+                            <Typography variant="body2">
+                                {passedService.serviceCategory}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <MonetizationOn sx={{ mr: 1, color: 'success.main' }} />
+                            <Typography variant="body2">
+                                Rs. {passedService.servicePrice}
+                            </Typography>
+                        </Box>
+                    </Box>
                     {showDelete && (
-                        <button
-                            className='button-type2'
-                            onClick={() => onDeleteItem(passedService.serviceId)} // Pass serviceId instead of index
+                        <IconButton
+                            color="error"
+                            onClick={() => onDeleteItem(passedService.serviceId)}
                         >
-                            <RemoveShoppingCart />Remove
-                        </button>
+                            <Delete />
+                        </IconButton>
                     )}
-                </div>
-            </div>
-        </div>
-    )
-}
+                </Box>
+            </CardContent>
+        </Card>
+    );
+};
 
-export default ServiceCard2
+export default ServiceCard2;
