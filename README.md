@@ -1,4 +1,4 @@
-# WeCare - Home Services Booking Website #
+#ServiceHUB - Home Services Booking Website #
 
 A website created as a course project submission.  
 
