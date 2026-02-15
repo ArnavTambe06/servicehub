@@ -1,37 +1,55 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { auth } from '../firebaseInit';
-import {
-    onAuthStateChanged,
-    setPersistence,
-    browserLocalPersistence
-} from 'firebase/auth';
+import React, { createContext, useState, useEffect } from 'react'
+import { auth } from '../firebaseInit'
+import { onAuthStateChanged } from 'firebase/auth'
 
-export const AuthContext = createContext();
+export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(null);
-    const [isProvider, setIsProvider] = useState(false); // You can set this based on user role from Firestore later
-    const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState(null)
+    const [isProvider, setIsProvider] = useState(false)
 
     useEffect(() => {
-        // Set persistence to local storage so that the user (or provider) stays logged in until logout.
-        setPersistence(auth, browserLocalPersistence)
-            .then(() => {
-                onAuthStateChanged(auth, (user) => {
-                    setCurrentUser(user);
-                    // Optionally, check for the user's role in your Firestore to update isProvider
-                    setLoading(false);
-                });
-            })
-            .catch((error) => {
-                console.error("Error setting persistence:", error);
-                setLoading(false);
-            });
-    }, []);
+        onAuthStateChanged(auth, (user) => {
+            if (user !== null) {
+                console.log(`Signed in with: ${user.uid}, provider: ${isProvider}`)
+                setCurrentUser(currentUser => user)
+            } else {
+                console.log('Signed out')
+                setCurrentUser(currentUser => null)
+            }
+        })
+    })
 
     return (
-        <AuthContext.Provider value={{ currentUser, isProvider, setIsProvider }}>
-            {!loading && children}
+        <AuthContext.Provider value={{ currentUser, setCurrentUser, isProvider, setIsProvider }}>
+            {children}
         </AuthContext.Provider>
-    );
-};
+    )
+}
+
+// export function useAuth() {
+//     return useContext(AuthContext)
+// }
+
+// export function AuthProvider({ children }) {
+
+//     const [currentUser, setCurrentUser] = useState()
+
+//     function firebaseSignUp(passedEmail, passedPassword) {
+//         return createUserWithEmailAndPassword(passedEmail, passedPassword)
+//     }
+
+//     useEffect(() => {
+//         const unsubscribe = onAuthStateChanged(auth, user => {
+//             setCurrentUser(user)
+//         })
+//         return unsubscribe
+//     }, [])
+
+//     // const value = {
+//     //     currentUser,
+//     //     signup
+//     // }
+
+//
+// }

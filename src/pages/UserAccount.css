@@ -1,0 +1,107 @@
+/* Container for the entire user account page */
+.user-account-container {
+  width: 95%;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* Header section styling for profile info */
+.user-account-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--background-paper);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+}
+
+/* Profile image circle styling */
+.user-account-header .profile-circle {
+  width: 100px;
+  height: 100px;
+  background: var(--grey);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* Styling for user information text */
+.user-info {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.user-info p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+/* Buttons container styling */
+.user-account-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.user-account-buttons button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* Specific style for update button */
+.user-update-btn {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.user-update-btn:hover {
+  background: var(--accent-color);
+}
+
+/* Cart section styling */
+.user-cart-container {
+  background: var(--background-paper);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+}
+
+.user-cart-container h4 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Styling for individual cart items */
+.cart-item {
+  border-bottom: 1px solid var(--dark-grey);
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+/* Cart total styling */
+.cart-total {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+/* Update dialog textfield spacing */
+.dialog-content .MuiTextField-root {
+  margin-bottom: 1rem;
+}

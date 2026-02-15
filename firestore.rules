@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 🔐 Users Collection
+    match /users/{userId} {
+      // Users can read and update their own profile
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      // Users can create only their own profile
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 📌 Providers Collection
+    match /providers/{providerId} {
+      // Anyone can read provider data
+      allow read: if true;
+      // Only the provider can update or delete their own profile
+      allow update, delete: if request.auth != null && request.auth.uid == providerId;
+      // Providers can create their own profile
+      allow create: if request.auth != null && request.auth.uid == providerId;
+    }
+
+    // 📂 Bookings Collection
+    // Authenticated users can create bookings.
+    // Providers can update a booking (to mark it as accepted) if the booking's providerId matches their auth uid.
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null;
+      // Require that a booking document includes a providerId on creation
+      allow create: if request.auth != null && request.resource.data.providerId != null;
+      // Only the provider (whose uid matches the booking’s providerId) may update or delete
+      allow update: if request.auth != null && request.auth.uid == resource.data.providerId;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.providerId;
+    }
+    
+    // 📂 Standalone Services Collection (if used)
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+    
+    // ...existing rules for other collections (if any)...
+  }
+}

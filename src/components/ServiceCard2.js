@@ -1,20 +1,10 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, IconButton } from '@mui/material';
-import { Widgets, MonetizationOn, Delete } from '@mui/icons-material';
+import { Card, CardContent, Typography, Box, IconButton, Button } from '@mui/material';
+import { Widgets, MonetizationOn, Delete, AddShoppingCart } from '@mui/icons-material';
 
-const ServiceCard2 = ({ passedService, passedIndex, onDeleteItem, showDelete }) => {
+const ServiceCard2 = ({ passedService, passedIndex, onDeleteItem, showDelete, onAddToCart }) => {
     return (
-        <Card
-            elevation={2}
-            sx={{
-                mb: 2,
-                '&:hover': {
-                    boxShadow: 6,
-                    transform: 'translateY(-2px)',
-                    transition: 'all 0.3s ease'
-                }
-            }}
-        >
+        <Card elevation={2} sx={{ mb: 2, '&:hover': { boxShadow: 6, transform: 'translateY(-2px)', transition: 'all 0.3s ease' } }}>
             <CardContent>
                 <Typography variant="h6" gutterBottom>
                     {passedService.serviceTitle}
@@ -38,14 +28,18 @@ const ServiceCard2 = ({ passedService, passedIndex, onDeleteItem, showDelete }) 
                         </Box>
                     </Box>
                     {showDelete && (
-                        <IconButton
-                            color="error"
-                            onClick={() => onDeleteItem(passedService.serviceId)}
-                        >
+                        <IconButton color="error" onClick={() => onDeleteItem(passedService.serviceId)}>
                             <Delete />
                         </IconButton>
                     )}
                 </Box>
+                {onAddToCart && (
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+                        <Button variant="outlined" color="primary" onClick={() => onAddToCart(passedService.serviceCategory, passedIndex)}>
+                            <AddShoppingCart sx={{ mr: 1 }} /> Add To Cart
+                        </Button>
+                    </Box>
+                )}
             </CardContent>
         </Card>
     );

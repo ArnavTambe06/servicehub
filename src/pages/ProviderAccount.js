@@ -1,138 +1,57 @@
-import React, { useState, useContext, useEffect } from 'react'; // Add useEffect
+import React, { useEffect, useContext, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import { doc, getDoc, updateDoc } from '@firebase/firestore'; // Add getDoc
+import { doc, onSnapshot, updateDoc } from '@firebase/firestore';
 import { db } from '../firebaseInit';
 import ServiceCard2 from '../components/ServiceCard2';
-import {
-    FormControl,
-    Select,
-    MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Button as MuiButton,
-    Grid  // Added Grid import
-} from '@mui/material';
 import { Person, Logout, Delete } from '@mui/icons-material';
-import { globalIconStyle } from '../assets/GlobalStyles';
 import './ProviderAccount.css';
+import { useHistory } from 'react-router-dom';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button as MuiButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const ProviderAccount = ({ providerData, setProviderData, onSignOutSubmit, onDeleteUser }) => {
     const { currentUser } = useContext(AuthContext);
-    const [loading, setLoading] = useState(false);
-    const [serviceInput, setServiceInput] = useState({
-        serviceId: 0,
-        serviceTitle: '',
-        serviceDescription: '',
-        serviceCategory: '',
-        servicePrice: 0.0,
-        serviceProvider: '',
+    const history = useHistory();
+    const [openUpdate, setOpenUpdate] = useState(false);
+    const [updateData, setUpdateData] = useState({});
+
+    // New state for service update
+    const [openServiceUpdate, setOpenServiceUpdate] = useState(false);
+    const [serviceUpdateData, setServiceUpdateData] = useState({});
+    const [serviceUpdateIndex, setServiceUpdateIndex] = useState(null);
+
+    // NEW: State for adding a new service
+    const [openAddService, setOpenAddService] = useState(false);
+    const [newServiceData, setNewServiceData] = useState({
+        serviceTitle: "",
+        serviceDescription: "",
+        servicePrice: "",
+        serviceCategory: ""
     });
 
-    // Add useEffect to fetch provider data when component mounts
+    // NEW: Define available categories for new services
+    const availableCategories = [
+        'Cleaning',
+        'Electricians',
+        'Plumbers',
+        'Carpenters',
+        'Pest Control',
+        'Salon for Women',
+        'Salon for Men',
+        'Massage',
+    ];
+
+    // Real-time listener for provider data and services
     useEffect(() => {
-        const fetchProviderData = async () => {
-            if (currentUser) {
-                try {
-                    const docRef = doc(db, 'providers', currentUser.uid);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        setProviderData(data);
-                    }
-                } catch (error) {
-                    console.error("Error fetching provider data:", error);
+        if (currentUser) {
+            const unsubscribe = onSnapshot(doc(db, 'providers', currentUser.uid), (docSnap) => {
+                if (docSnap.exists()) {
+                    setProviderData(docSnap.data());
+                    setUpdateData(docSnap.data());
                 }
-            }
-        };
-
-        fetchProviderData();
+            });
+            return () => unsubscribe();
+        }
     }, [currentUser, setProviderData]);
-
-    // New: Function to set the form for editing an existing service
-    const onEditService = (service) => {
-        setServiceInput(service);
-    };
-
-    // Updated delete function: prompt user to type "yes" to confirm deletion
-    const onDeleteService = async (serviceId) => {
-        const answer = prompt("Type 'yes' to confirm deletion of this service:");
-        if (answer && answer.toLowerCase() === 'yes') {
-            try {
-                // Filter out the service with matching serviceId
-                const updatedServices = (providerData.services || [])
-                    .filter(service => String(service.serviceId) !== String(serviceId));
-
-                // Update Firestore first
-                await updateDoc(doc(db, 'providers', currentUser.uid), {
-                    services: updatedServices
-                });
-
-                // Then update local state to reflect the change
-                setProviderData(prev => ({
-                    ...prev,
-                    services: updatedServices
-                }));
-
-                alert('Service deleted successfully!');
-            } catch (error) {
-                console.error("Service deletion failed:", error);
-                alert("Service deletion failed: " + error.message);
-            }
-        }
-    };
-
-    const onAddServiceSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            const newServiceId = Date.now().toString();
-            const newService = {
-                ...serviceInput,
-                serviceId: newServiceId,
-                serviceProvider: providerData.companyName,
-            };
-
-            // Get current services array or initialize empty array
-            const currentServices = providerData.services || [];
-            const updatedServices = [...currentServices, newService];
-
-            // Update Firestore
-            const providerRef = doc(db, 'providers', currentUser.uid);
-            await updateDoc(providerRef, {
-                services: updatedServices
-            });
-
-            // Update local state
-            setProviderData(prev => ({
-                ...prev,
-                services: updatedServices
-            }));
-
-            // Reset form
-            setServiceInput({
-                serviceId: '',
-                serviceTitle: '',
-                serviceDescription: '',
-                serviceCategory: '',
-                servicePrice: 0.0,
-                serviceProvider: '',
-            });
-
-            alert('Service added successfully!');
-        } catch (error) {
-            console.error('Error adding service:', error);
-            alert('Failed to add service: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const [openUpdate, setOpenUpdate] = useState(false);
-    const [updateData, setUpdateData] = useState({ ...providerData });
 
     const handleUpdateChange = (e) => {
         const { name, value } = e.target;
@@ -141,178 +60,219 @@ const ProviderAccount = ({ providerData, setProviderData, onSignOutSubmit, onDel
 
     const handleUpdateSubmit = async () => {
         try {
-            // Remove undefined values from updateData
-            const filteredUpdateData = Object.fromEntries(
-                Object.entries(updateData).map(([key, value]) => [key, value === undefined ? "" : value])
-            );
-            await updateDoc(doc(db, 'providers', currentUser.uid), filteredUpdateData);
-            setProviderData(filteredUpdateData);
+            await updateDoc(doc(db, 'providers', currentUser.uid), {
+                companyName: updateData.companyName || "",
+                firstName: updateData.firstName || "",
+                lastName: updateData.lastName || "",
+                email: updateData.email || "",
+                phone: updateData.phone || "",
+                description: updateData.description || ""
+            });
+            alert("Profile updated successfully!");
             setOpenUpdate(false);
         } catch (error) {
             alert("Update failed: " + error.message);
         }
     };
 
+    // Handlers for updating a service 
+    const handleServiceUpdateChange = (e) => {
+        const { name, value } = e.target;
+        setServiceUpdateData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleServiceUpdateSubmit = async () => {
+        try {
+            const updatedServices = [...providerData.services];
+            updatedServices[serviceUpdateIndex] = serviceUpdateData;
+            await updateDoc(doc(db, 'providers', currentUser.uid), { services: updatedServices });
+            alert("Service updated successfully!");
+            setOpenServiceUpdate(false);
+        } catch (error) {
+            alert("Service update failed: " + error.message);
+        }
+    };
+
+    // NEW: Handler for new service field changes
+    const handleNewServiceChange = (e) => {
+        const { name, value } = e.target;
+        setNewServiceData(prev => ({ ...prev, [name]: value }));
+    };
+
+    // NEW: Handler for submitting new service
+    const handleAddServiceSubmit = async () => {
+        try {
+            const updatedServices = providerData.services ? [...providerData.services] : [];
+            // Simple id generated from timestamp
+            newServiceData.serviceId = Date.now().toString();
+            updatedServices.push(newServiceData);
+            await updateDoc(doc(db, 'providers', currentUser.uid), { services: updatedServices });
+            alert("New service added successfully!");
+            setOpenAddService(false);
+            setNewServiceData({ serviceTitle: "", serviceDescription: "", servicePrice: "", serviceCategory: "" });
+        } catch (error) {
+            alert("Failed to add new service: " + error.message);
+        }
+    };
+
     return (
         <>
-            <div className='flex-row'>
-                <div className='card-type1 account-card'>
-                    <div className='flex-column-stretch eightyperc-container'>
-                        <div className='flex-row'>
-                            <div className='circle size100px'>
-                                <Person style={globalIconStyle} />
-                            </div>
+            <div className="account-container">
+                <div className="account-card">
+                    <div className="account-header">
+                        <div className="logo-circle">
+                            <Person />
                         </div>
-                        <h3 className='heading-type3 center-text'>{providerData.companyName}</h3>
-                        <div className='flex-row'><p className='para-type2'>Account Manager:</p><p className='grey-container'>{providerData.firstName} {providerData.lastName}</p></div>
-                        <div className='flex-row'><p className='para-type2'>Email:</p><p className='grey-container'>{providerData.email}</p></div>
-                        <div className='flex-row'><p className='para-type2'>Phone Number:</p><p className='grey-container'>{providerData.phone}</p></div>
-                        <div className='flex-row left-justify'><p className='para-type2'>About Your Company:</p></div>
-                        <div className="flex-row"><p className='grey-container'>{providerData.description}</p></div>
-                        <button className='button-type1' onClick={onSignOutSubmit}><Logout />Log Out</button>
-                        <button className='button-type2' onClick={onDeleteUser}><Delete />Delete Account</button>
-                        <button className='button-type1' onClick={() => setOpenUpdate(true)}>Update Details</button>
+                        <h3>{providerData.companyName}</h3>
+                    </div>
+                    <div className="account-details">
+                        <p>Account Manager: {providerData.firstName} {providerData.lastName}</p>
+                        <p>Email: {providerData.email}</p>
+                        <p>Phone Number: {providerData.phone}</p>
+                        <p>About Your Company: {providerData.description}</p>
+                    </div>
+                    <div className="account-actions">
+                        <button className="button-type1" onClick={onSignOutSubmit}>
+                            <Logout /> Log Out
+                        </button>
+                        <button className="button-type1" onClick={() => setOpenUpdate(true)}>
+                            Update Profile
+                        </button>
+                        <button className="button-type2" onClick={onDeleteUser}>
+                            <Delete /> Delete Account
+                        </button>
                     </div>
                 </div>
-            </div>
-            <div className='card-type1 account-card'>
-                <div className='flex-column-stretch ninetyfiveperc-container'>
-                    <h4 className='heading-type3'>Your Services: {(providerData?.services || []).length}</h4>
-                    <div className="flex-column-stretch dark-grey-container">
-                        {providerData?.services?.length > 0 ? providerData.services.map((eachService, index) => (
-                            <ServiceCard2
-                                key={`service-${eachService.serviceId || index}`}
-                                passedService={eachService}
-                                passedIndex={index}
-                                showDelete={true}
-                                onDeleteItem={onDeleteService}  // Updated prop to match what ServiceCard2 expects
-                                onEditService={onEditService}
-                            />
-                        )) : <p className='para-type2'>No Services Added</p>}
+
+                <div className="account-card">
+                    <h4>Your Services: {providerData.services ? providerData.services.length : 0}</h4>
+                    <div className="service-list">
+                        {providerData.services && providerData.services.length > 0 ? (
+                            providerData.services.map((service, index) => (
+                                <div key={service.serviceId || index} style={{ marginBottom: '1rem' }}>
+                                    <ServiceCard2
+                                        passedService={service}
+                                        passedIndex={index}
+                                        showDelete={true}
+                                        onDeleteItem={() => {
+                                            /* Implement deletion handler if needed */
+                                        }}
+                                    />
+                                    <button
+                                        className="button-type1"
+                                        onClick={() => {
+                                            setServiceUpdateIndex(index);
+                                            setServiceUpdateData(service);
+                                            setOpenServiceUpdate(true);
+                                        }}
+                                    >
+                                        Update Service
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No Services Added</p>
+                        )}
+                        {/* NEW: Button to add a new service */}
+                        <button className="button-type1" onClick={() => setOpenAddService(true)}>
+                            Add New Service
+                        </button>
                     </div>
                 </div>
+
+                <div className="account-card">
+                    <button className="button-type1" onClick={() => history.push('/provider-bookings')}>
+                        View Bookings
+                    </button>
+                </div>
             </div>
-            <div className='card-type1 account-card auto-side-margin'>
-                <form onSubmit={onAddServiceSubmit} className='eightyperc-container'>
-                    <h4 className='heading-type3'>{serviceInput.serviceId ? "Edit Service" : "Add a New Service"}</h4>
-                    {/* NEW: Service Category dropdown shown first */}
-                    <FormControl fullWidth sx={{ mb: 2 }}>
-                        <Select
-                            name='serviceCategory'
-                            value={String(serviceInput.serviceCategory)}
-                            onChange={(e) => setServiceInput(prev => ({ ...prev, serviceCategory: e.target.value }))}
-                        >
-                            <MenuItem value=''>Select Service Category</MenuItem>
-                            <MenuItem value='Cleaning'>Cleaning</MenuItem>
-                            <MenuItem value='Electricians'>Electricians</MenuItem>
-                            <MenuItem value='Plumbers'>Plumbers</MenuItem>
-                            <MenuItem value='Carpenters'>Carpenters</MenuItem>
-                            <MenuItem value='Pest Control'>Pest Control</MenuItem>
-                            <MenuItem value='Salon for Women'>Salon for Women</MenuItem>
-                            <MenuItem value='Salon for Men'>Salon for Men</MenuItem>
-                            <MenuItem value='Massage'>Massage</MenuItem>
-                            <MenuItem value='Miscellanious'>Miscellanious</MenuItem>
-                        </Select>
-                    </FormControl>
-                    {/* Then the rest of the service fields */}
-                    <TextField
-                        label='Service Title'
-                        name='serviceTitle'
-                        fullWidth
-                        value={serviceInput.serviceTitle}
-                        onChange={(e) => setServiceInput(prev => ({ ...prev, serviceTitle: e.target.value }))}
-                        sx={{ mb: 2 }}
-                    />
-                    <TextField
-                        label='Service Description'
-                        name='serviceDescription'
-                        fullWidth
-                        multiline
-                        rows={3}
-                        value={serviceInput.serviceDescription}
-                        onChange={(e) => setServiceInput(prev => ({ ...prev, serviceDescription: e.target.value }))}
-                        sx={{ mb: 2 }}
-                    />
-                    <TextField
-                        label='Service Price (Rs.)'
-                        name='servicePrice'
-                        fullWidth
-                        type='number'
-                        value={serviceInput.servicePrice}
-                        onChange={(e) => setServiceInput(prev => ({ ...prev, servicePrice: e.target.value }))}
-                        sx={{ mb: 2 }}
-                    />
-                    <MuiButton type='submit' variant='contained' fullWidth disabled={loading}>
-                        {serviceInput.serviceId ? "Update Service" : "Submit"}
-                    </MuiButton>
-                </form>
-            </div>
+
+            {/* Update Profile Dialog */}
             <Dialog open={openUpdate} onClose={() => setOpenUpdate(false)} maxWidth="sm" fullWidth>
-                <DialogTitle>Update Your Details</DialogTitle>
+                <DialogTitle>Update Provider Profile</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Company Name"
-                                name="companyName"
-                                fullWidth
-                                value={updateData.companyName || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="First Name"
-                                name="firstName"
-                                fullWidth
-                                value={updateData.firstName || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="Last Name"
-                                name="lastName"
-                                fullWidth
-                                value={updateData.lastName || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Email"
-                                name="email"
-                                fullWidth
-                                value={updateData.email || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Phone Number"
-                                name="phone"
-                                fullWidth
-                                value={updateData.phone || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Description"
-                                name="description"
-                                fullWidth
-                                multiline
-                                rows={3}
-                                value={updateData.description || ''}
-                                onChange={handleUpdateChange}
-                            />
-                        </Grid>
-                    </Grid>
+                    <TextField margin="dense" label="Company Name" name="companyName" value={updateData.companyName || ''} onChange={handleUpdateChange} fullWidth />
+                    <TextField margin="dense" label="First Name" name="firstName" value={updateData.firstName || ''} onChange={handleUpdateChange} fullWidth />
+                    <TextField margin="dense" label="Last Name" name="lastName" value={updateData.lastName || ''} onChange={handleUpdateChange} fullWidth />
+                    <TextField margin="dense" label="Email" name="email" value={updateData.email || ''} onChange={handleUpdateChange} fullWidth />
+                    <TextField margin="dense" label="Phone" name="phone" value={updateData.phone || ''} onChange={handleUpdateChange} fullWidth />
+                    <TextField margin="dense" label="Description" name="description" value={updateData.description || ''} onChange={handleUpdateChange} fullWidth multiline />
                 </DialogContent>
                 <DialogActions>
                     <MuiButton onClick={() => setOpenUpdate(false)}>Cancel</MuiButton>
                     <MuiButton onClick={handleUpdateSubmit} variant="contained">
-                        Update Profile
+                        Update
+                    </MuiButton>
+                </DialogActions>
+            </Dialog>
+
+            {/* Update Service Dialog */}
+            <Dialog open={openServiceUpdate} onClose={() => setOpenServiceUpdate(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Update Service</DialogTitle>
+                <DialogContent>
+                    <TextField margin="dense" label="Service Title" name="serviceTitle" value={serviceUpdateData.serviceTitle || ''} onChange={handleServiceUpdateChange} fullWidth />
+                    <TextField margin="dense" label="Description" name="serviceDescription" value={serviceUpdateData.serviceDescription || ''} onChange={handleServiceUpdateChange} fullWidth multiline />
+                    <TextField margin="dense" label="Price" name="servicePrice" type="number" value={serviceUpdateData.servicePrice || ''} onChange={handleServiceUpdateChange} fullWidth />
+                </DialogContent>
+                <DialogActions>
+                    <MuiButton onClick={() => setOpenServiceUpdate(false)}>Cancel</MuiButton>
+                    <MuiButton onClick={handleServiceUpdateSubmit} variant="contained">
+                        Update Service
+                    </MuiButton>
+                </DialogActions>
+            </Dialog>
+
+            {/* NEW: Add New Service Dialog */}
+            <Dialog open={openAddService} onClose={() => setOpenAddService(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Add New Service</DialogTitle>
+                <DialogContent>
+                    {/* Moved category dropdown to the top */}
+                    <FormControl fullWidth margin="dense">
+                        <InputLabel id="service-category-label">Category</InputLabel>
+                        <Select
+                            labelId="service-category-label"
+                            id="service-category"
+                            label="Category"
+                            name="serviceCategory"
+                            value={newServiceData.serviceCategory || ''}
+                            onChange={handleNewServiceChange}
+                        >
+                            {availableCategories.map((option) => (
+                                <MenuItem key={option} value={option}>{option}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        margin="dense"
+                        label="Service Title"
+                        name="serviceTitle"
+                        value={newServiceData.serviceTitle || ''}
+                        onChange={handleNewServiceChange}
+                        fullWidth
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Description"
+                        name="serviceDescription"
+                        value={newServiceData.serviceDescription || ''}
+                        onChange={handleNewServiceChange}
+                        fullWidth
+                        multiline
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Price"
+                        name="servicePrice"
+                        type="number"
+                        value={newServiceData.servicePrice || ''}
+                        onChange={handleNewServiceChange}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <MuiButton onClick={() => setOpenAddService(false)}>Cancel</MuiButton>
+                    <MuiButton onClick={handleAddServiceSubmit} variant="contained">
+                        Add Service
                     </MuiButton>
                 </DialogActions>
             </Dialog>

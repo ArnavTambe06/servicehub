@@ -3,24 +3,24 @@ import { createTheme } from '@mui/material';
 export const theme = createTheme({
     palette: {
         primary: {
-            main: '#C17817',      // Warm brown
-            light: '#E19B24',     // Soft orange
-            dark: '#8B4513',      // Deep brown
+            main: '#A47149',
+            light: '#BB8B67',
+            dark: '#7D4B29',
             contrastText: '#fff'
         },
         secondary: {
-            main: '#718355',      // Sage green
-            light: '#A4B494',     // Light sage
-            dark: '#4A5D32',      // Forest green
+            main: '#D7BFA6',
+            light: '#EADDCB',
+            dark: '#BFA685',
             contrastText: '#fff'
         },
         background: {
-            default: '#FDF5E6',   // Warm off-white
+            default: '#FBF5EE',
             paper: '#FFFFFF'
         },
         text: {
-            primary: '#2C1810',   // Dark brown
-            secondary: '#5C4033'  // Medium brown
+            primary: '#3C2F2F',
+            secondary: '#6E6253'
         }
     },
     shape: {

@@ -1,52 +1,53 @@
 :root {
-  --primary-color: #1fb3ee;
-  --accent-color: #56cfff;
-  --background-default: #ffffff;
-  --background-paper: #ffffff;
-  --accent-cream: #ffefba;
-  --text-primary: #1e1e1e;
-  --text-secondary: #777777;
-  --grey: #f7f9fc;
+	/* Homy Environment Palette */
+	--primary-color: #A47149;
+	--accent-color: #D7BFA6;
+	--background-default: #FBF5EE;
+	--background-paper: #FFFFFF;
+	--accent-cream: #F4D7A0;
+	--text-primary: #3C2F2F;
+	--text-secondary: #6E6253;
+	--grey: #C4B7A6;
 
-  /* Primary Colors - Warm Earth Tones */
-  --primary-main: #C17817;
-  --primary-light: #E19B24;
-  --primary-dark: #8B4513;
-  
-  /* Secondary Colors - Natural Greens */
-  --secondary-main: #718355;
-  --secondary-light: #A4B494;
-  --secondary-dark: #4A5D32;
-  
-  /* Background Colors */
-  --background-default: #FDF5E6;
-  --background-paper: #FFFFFF;
-  
-  /* Text Colors */
-  --text-primary: #2C1810;
-  --text-secondary: #5C4033;
-  
-  /* Accent Colors */
-  --accent-terracotta: #E07A5F;
-  --accent-cream: #F2E3D5;
-  --accent-moss: #8A9A5B;
-  
-  /* Status Colors */
-  --success: #81996C;
-  --warning: #D4AC2B;
-  --error: #B4464B;
-  
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
-  --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+	/* Primary Colors - Warm Brown */
+	--primary-main: #A47149;
+	--primary-light: #BB8B67;
+	--primary-dark: #7D4B29;
+
+	/* Secondary Colors - Warm Creams */
+	--secondary-main: #D7BFA6;
+	--secondary-light: #EADDCB;
+	--secondary-dark: #BFA685;
+
+	/* Background Colors */
+	--background-default: #FBF5EE;
+	--background-paper: #FFFFFF;
+
+	/* Text Colors */
+	--text-primary: #3C2F2F;
+	--text-secondary: #6E6253;
+
+	/* Accent Colors */
+	--accent-terracotta: #F2994A;
+	--accent-cream: #F4D7A0;
+	--accent-moss: #B4C7B2;
+
+	/* Status Colors */
+	--success: #5CB85C;
+	--warning: #F0AD4E;
+	--error: #D9534F;
+
+	/* Spacing */
+	--spacing-xs: 4px;
+	--spacing-sm: 8px;
+	--spacing-md: 16px;
+	--spacing-lg: 24px;
+	--spacing-xl: 32px;
+
+	/* Shadows */
+	--shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+	--shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+	--shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 body {

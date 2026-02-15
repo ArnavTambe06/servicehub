@@ -1,5 +1,5 @@
 import React from 'react'
-import SearchBar from './SearchBar'
+
 
 const Showcase = () => {
     return (
@@ -8,11 +8,14 @@ const Showcase = () => {
                 <h1 className='heading-type1'>Solutions for all your home and personal needs.</h1>
                 <h3 className='heading-type2'>Best in class service all year round</h3>
             </div>
+            {/* Removed search box */}
+            {/*
             <div className='eightyperc-container'>
                 <div className='eightyperc-container'>
                     <SearchBar />
                 </div>
-            </div>
+            </div> 
+            */}
         </div>
     )
 }

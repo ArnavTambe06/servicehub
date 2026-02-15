@@ -1,88 +1,103 @@
 /* General styles */
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-    padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
 }
 
 /* Card styling */
 .card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    border: 2px solid #ffefba;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  border: 2px solid #ffefba;
 }
 
 /* Header styling */
 .header {
-    background: linear-gradient(135deg, #2196f3, #00bcd4);
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 20px;
-    font-weight: bold;
+  background: burlywood;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 /* Form field styling */
 .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* NEW: Spaced container to structure provider form fields */
+.form-container-spaced {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
 }
 
 .input-field {
-    width: 100%;
+  width: 100%;
+}
+
+/* NEW: Add extra spacing to text boxes */
+.input-field .MuiOutlinedInput-root {
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Button styling */
 .primary-button {
-    background: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s ease-in-out;
+  background: white;
+  color: black;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s ease-in-out;
 }
 
 .primary-button:hover {
-    background: #0056b3;
+  background: burlywood;
 }
 
 /* Google Sign-In Button */
 .google-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s ease-in-out;
 }
 
 .google-button:hover {
-    background: #f8f8f8;
+  background: #f8f8f8;
 }
 
 /* Responsive styles */
 @media (max-width: 600px) {
-    .card {
-        padding: 20px;
-    }
+  .card {
+    padding: 20px;
+  }
 
-    .header {
-        font-size: 18px;
-    }
+  .header {
+    font-size: 18px;
+  }
 }

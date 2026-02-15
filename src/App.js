@@ -16,6 +16,8 @@ import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 import './styles/global.css';
+import ProviderBookings from './pages/ProviderBookings';
+//import PaymentGateway from './pages/PaymentGateway'
 
 const App = () => {
 
@@ -37,6 +39,8 @@ const App = () => {
                                 <Route exact path='/signup' component={SignUp} />
                                 <PrivateRoute exact path='/account' component={Account} />
                                 <PrivateRoute exact path='/checkout' component={Checkout} />
+
+                                <PrivateRoute exact path='/provider-bookings' component={ProviderBookings} />
                             </main>
                         </div>
                         <Footer />

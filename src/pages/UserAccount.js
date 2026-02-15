@@ -1,180 +1,176 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import { useHistory } from 'react-router-dom'
 import { doc, updateDoc } from '@firebase/firestore'
 import { db } from '../firebaseInit'
 import ServiceCard2 from '../components/ServiceCard2'
-import { Person, Logout, Delete, ShoppingCart, ArrowForward } from '@mui/icons-material'
+import { Person, Logout, Delete } from '@mui/icons-material'
 import { globalIconStyle } from '../assets/GlobalStyles'
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button as MuiButton, Grid } from '@mui/material'
+import './UserAccount.css'
 
 const UserAccount = ({ userData, setUserData, onSignOutSubmit, onDeleteUser }) => {
-
     const history = useHistory()
     const { currentUser } = useContext(AuthContext)
-    const [loading, setLoading] = useState(false)
-    const [userInput, setUserInput] = useState({
-        userInputAddress: '',
-        userInputNumber: ''
-    })
+    const [, setLoading] = useState(false)
+    const [openUpdate, setOpenUpdate] = useState(false);
+    const [updateData, setUpdateData] = useState({ ...userData });
 
-    const handleUserInputChange = (e) => {
-        setUserInput({
-            ...userInput,
-            [e.target.name]: e.target.value
-        })
-    }
+    // Sync updateData with realtime userData updates.
+    useEffect(() => {
+        setUpdateData({ ...userData });
+    }, [userData]);
 
-    const onAddDetailsSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-            userAddress: userInput.userInputAddress,
-            userNumber: userInput.userInputNumber
-        }).catch((error) => {
-            console.log(`in userAccount/addDetails/fireStore_upDoc: Error Code ${error.code}: ${error.message}`)
-            setLoading(false)
-            return
-        })
-        setUserInput(userInput => ({
-            userInputAddress: '',
-            userInputNumber: ''
-        }))
-        setLoading(false)
-    }
+    const handleUpdateChange = (e) => {
+        const { name, value } = e.target;
+        setUpdateData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdateSubmit = async () => {
+        try {
+            const updatedFields = {
+                name: updateData.userDataFirstName || "",
+                lastname: updateData.userDataLastName || "",
+                email: updateData.userDataEmail || "",
+                address: updateData.userDataAddress || "",
+                number: updateData.userDataNumber || ""
+            };
+            await updateDoc(doc(db, 'users', currentUser.uid), updatedFields);
+            alert("Details updated successfully!");
+            setOpenUpdate(false);
+        } catch (error) {
+            alert("Update failed: " + error.message);
+        }
+    };
 
     const onDeleteItem = async (passedIndex) => {
         setLoading(true)
-        console.log(`indexToDelete: ${passedIndex}`)
-        const finalCart = userData.userDataCart
+        const finalCart = [...userData.userDataCart]
         finalCart.splice(passedIndex, 1)
-        setUserData(userData => ({
-            ...userData,
+        setUserData(prev => ({
+            ...prev,
             userDataCart: finalCart
         }))
         await updateDoc(doc(db, 'users', currentUser.uid), {
             userCart: finalCart
         }).catch((error) => {
-            console.log(`in userAccount/deleteItem/fireStore_upDoc: Error Code ${error.code}: ${error.message}`)
+            console.log(`Error: ${error.message}`)
             setLoading(false)
             return
         })
         setLoading(false)
-    }
+    };
 
-    const onEmptyCart = async () => {
-        setLoading(true)
-        const finalCart = []
-        setUserData(userData => ({
-            ...userData,
-            userDataCart: finalCart
-        }))
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-            userCart: finalCart
-        }).catch((error) => {
-            console.log(`in userAccount/emptyCart/fireStore_upDoc: Error Code ${error.code}: ${error.message}`)
-            setLoading(false)
-            return
-        })
-        setLoading(false)
-    }
-
-    const calculateCartTotal = (passedCart) => {
-        var cartTotal = 0.0
-        if (passedCart.length !== 0) {
-            passedCart.map((eachService) => cartTotal = cartTotal + parseFloat(eachService.servicePrice))
-        }
-        return cartTotal
-    }
+    const calculateCartTotal = (cart) => {
+        return cart.reduce((total, service) => total + parseFloat(service.servicePrice), 0)
+    };
 
     const onCheckOutClicked = () => {
-        setLoading(true)
-        console.log(`Checkout Clicked.`)
         history.push('/checkout')
-        setLoading(false)
-    }
+    };
 
     return (
         <>
-            <div className='eightyperc-container'>
-                <div className='flex-row'>
-                    <div className='card-type1 account-card'>
-                        <div className='flex-column-stretch eightyperc-container'>
-                            <div className='flex-row'>
-                                <div className='circle size100px'>
-                                    <Person style={globalIconStyle} />
-                                </div>
-                            </div>
-                            <h3 className='heading-type3 center-text'>{userData.userDataFirstName} {userData.userDataLastName}</h3>
-                            <div className='flex-row'>
-                                <p className='para-type2'>Email:</p><p className='grey-container'>{userData.userDataEmail}</p>
-                            </div>
-                            <div className='flex-row left-justify'>
-                                <p className='para-type2'>Address:</p><p className='grey-container'>{userData.userDataAddress}</p>
-                            </div>
-                            <div className='flex-row'>
-                                <p className='para-type2'>Phone Number:</p><p className='grey-container'>{userData.userDataNumber}</p>
-                            </div>
-                            <div className='flex-row'>
-                                <button className='button-type1' onClick={onSignOutSubmit}><Logout />Log Out</button>
-                                <button className='button-type2' onClick={onDeleteUser}><Delete />Delete Account</button>
-                            </div>
-                        </div>
+            <div className="user-account-container">
+                <div className="user-account-header">
+                    <div className="profile-circle">
+                        <Person style={globalIconStyle} />
                     </div>
-                    <div className='card-type1 account-card auto-side-margin'>
-                        <form onSubmit={onAddDetailsSubmit} className='eightyperc-container'>
-                            <h4 className='heading-type3'>Enter Additional Details</h4>
-                            <div className='flex-column-stretch'>
-                                <div className='flex-column-stretch signup-description'>
-                                    <p>Enter Address: </p>
-                                    <textarea
-                                        name='userInputAddress'
-                                        placeholder='About my service...'
-                                        value={userInput.userInputAddress}
-                                        onChange={handleUserInputChange}
-                                    />
-                                </div>
-                                <div className='flex-row'>
-                                    <p>Phone Number: </p>
-                                    <input type='text'
-                                        name='userInputNumber'
-                                        placeholder='+91...'
-                                        value={userInput.userInputNumber}
-                                        onChange={handleUserInputChange}
-                                    />
-                                </div>
-                                <div className='flex-row'>
-                                    <input type='submit' className='button' value='Submit' disabled={loading} />
-                                </div>
+                    <h3 className="heading-type3 center-text">
+                        {userData.userDataFirstName} {userData.userDataLastName}
+                    </h3>
+                    <div className="user-info">
+                        <p>Email: {userData.userDataEmail}</p>
+                        <p>Address: {userData.userDataAddress}</p>
+                        <p>Phone: {userData.userDataNumber}</p>
+                    </div>
+                    <div className="user-account-buttons">
+                        <button className="button-type1" onClick={onSignOutSubmit}>
+                            <Logout /> Log Out
+                        </button>
+                        <button className="button-type2" onClick={onDeleteUser}>
+                            <Delete /> Delete Account
+                        </button>
+                        <button className="user-update-btn" onClick={() => setOpenUpdate(true)}>
+                            Update Details
+                        </button>
+                    </div>
+                </div>
+
+                <div className="user-cart-container">
+                    <h4>Your Cart Items: {userData.userDataCart.length}</h4>
+                    <div className="dark-grey-container">
+                        {userData.userDataCart.length !== 0 ? userData.userDataCart.map((eachService, serviceIndex) => (
+                            <div key={serviceIndex} className="cart-item">
+                                <ServiceCard2
+                                    passedService={eachService}
+                                    passedIndex={serviceIndex}
+                                    onDeleteItem={onDeleteItem}
+                                    showDelete={true}
+                                />
                             </div>
-                        </form>
+                        )) : <p className="para-type2">Cart is Empty</p>}
+                    </div>
+                    <div className="cart-total">
+                        Cart Total: Rs. {calculateCartTotal(userData.userDataCart)}
+                    </div>
+                    <div className="checkout-button-container">
+                        <button className="button-type1" onClick={onCheckOutClicked}>
+                            Checkout
+                        </button>
                     </div>
                 </div>
             </div>
-            <div className='flex-column'>
-                <div className='card-type1 eightyperc-container'>
-                    <div className='flex-column-stretch ninetyfiveperc-container'>
-                        <h4 className='heading-type3'>Your Cart Items: {userData.userDataCart.length}</h4>
-                        <div className="flex-column-stretch dark-grey-container">
-                            {(userData.userDataCart.length !== 0) ? userData.userDataCart.map((eachService, serviceIndex) => (
-                                <ServiceCard2 passedService={eachService} passedIndex={serviceIndex} onDeleteItem={onDeleteItem} showDelete={true} />
-                            )) : <div className='flex-row'>
-                                <p className='para-type2'>Cart is Empty</p>
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-                {(userData.userDataCart.length !== 0) ? <div className="card-type1 eightyperc-container cart-total-card">
-                    <div className='flex-row'>
-                        <h4>Cart Total:   Rs. {calculateCartTotal(userData.userDataCart)}</h4>
-                    </div>
-                    <div className='flex-row'>
-                        <button className='button-type2' onClick={onEmptyCart}><Delete />Empty Cart</button>
-                        <button className='button-type1' onClick={onCheckOutClicked}>Proceed To Checkout<ShoppingCart /><ArrowForward /></button>
-                    </div>
-                </div> : <></>
-                }
-            </div>
+
+            <Dialog open={openUpdate} onClose={() => setOpenUpdate(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Update Your Details</DialogTitle>
+                <DialogContent className="dialog-content">
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Full Name"
+                                name="userDataFirstName"
+                                fullWidth
+                                value={updateData.userDataFirstName || ''}
+                                onChange={handleUpdateChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Email"
+                                name="userDataEmail"
+                                fullWidth
+                                value={updateData.userDataEmail || ''}
+                                onChange={handleUpdateChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Address"
+                                name="userDataAddress"
+                                fullWidth
+                                value={updateData.userDataAddress || ''}
+                                onChange={handleUpdateChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Phone Number"
+                                name="userDataNumber"
+                                fullWidth
+                                value={updateData.userDataNumber || ''}
+                                onChange={handleUpdateChange}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <MuiButton onClick={() => setOpenUpdate(false)}>Cancel</MuiButton>
+                    <MuiButton onClick={handleUpdateSubmit} variant="contained">
+                        Update
+                    </MuiButton>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

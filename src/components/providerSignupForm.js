@@ -103,7 +103,7 @@ const ProviderSignupForm = () => {
     return (
         <div className="container">
             <div className="card">
-                <header className="header">
+                <header className="header" style={{ marginBottom: '2rem' }}>
                     <h2>{isLogin ? 'Provider Login' : 'Become a Provider'}</h2>
                     <p>
                         {isLogin
@@ -164,7 +164,8 @@ const ProviderSignupForm = () => {
                     </form>
                 ) : (
                     <form onSubmit={handleSignup}>
-                        <div className="form-container">
+                        {/* NEW: Container with spacing for provider fields */}
+                        <div className="form-container form-container-spaced">
                             <TextField
                                 className="input-field"
                                 fullWidth
@@ -243,7 +244,7 @@ const ProviderSignupForm = () => {
                         </Button>
                     </form>
                 )}
-                <footer style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                <footer style={{ textAlign: 'center', marginTop: '1.5rem', backgroundColor: 'white' }}>
                     <Button
                         onClick={() => setIsLogin(!isLogin)}
                         sx={{ color: 'primary.main' }}
