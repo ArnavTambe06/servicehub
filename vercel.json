@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm install && chmod +x node_modules/.bin/* 2>/dev/null || true && NODE_OPTIONS=--openssl-legacy-provider npm run build",
+  "env": {
+    "NODE_OPTIONS": "--openssl-legacy-provider"
+  }
+}
